@@ -92,6 +92,12 @@ variable "keep_job_flow_alive_when_no_steps" {
   default     = true
 }
 
+variable "steps" {
+  type        = string
+  description = "The JSON body for EMR steps"
+  default     = null
+}
+
 variable "step_concurrency_level" {
   type        = number
   description = "The number of steps that can be executed concurrently. You can specify a maximum of 256 steps. Only valid for EMR clusters with release_label 5.28.0 or greater."

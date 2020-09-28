@@ -357,7 +357,7 @@ locals {
   bootstrap_action = concat(
     [{
       path = "file:/bin/echo",
-      name = "Dummy bootstrap action to prevent EMR cluster recration when configuration_json has parameter javax.jdo.option.ConnectionPassword.",
+      name = "Dummy bootstrap action to prevent EMR cluster recreation when configuration_json has parameter javax.jdo.option.ConnectionPassword.",
       args = [md5(jsonencode(var.configurations_json))]
     }],
     var.bootstrap_action
@@ -433,12 +433,26 @@ resource "aws_emr_cluster" "default" {
   additional_info        = var.additional_info
   security_configuration = var.security_configuration
 
+
   dynamic "bootstrap_action" {
     for_each = local.bootstrap_action
     content {
       path = bootstrap_action.value.path
       name = bootstrap_action.value.name
       args = bootstrap_action.value.args
+    }
+  }
+
+  dynamic "step" {
+    for_each = var.steps
+    content {
+      action_on_failure = step.value.action_on_failure
+      name              = step.value.name
+      hadoop_jar_step {
+        jar  = step.value.hadoop_jar_step.jar
+        args = step.value.hadoop_jar_step.args
+      }
+
     }
   }
 
