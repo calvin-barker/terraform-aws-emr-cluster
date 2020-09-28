@@ -93,7 +93,14 @@ variable "keep_job_flow_alive_when_no_steps" {
 }
 
 variable "steps" {
-  type        = string
+  type = list(object({
+    action_on_failure = string
+    name = string
+    hadoop_jar_step = object({
+      jar = string
+      args = list(string)
+    })
+  }))
   description = "The JSON body for EMR steps"
   default     = null
 }
